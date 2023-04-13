@@ -53,6 +53,45 @@ namespace TodoList.BusinessLogic.Services
             return _DbContext.Todos.ToList();
         }
 
+        public IEnumerable<Todo> GetTodos(int pageNumber = 1, int pageSize = 10)
+        {
+            var tasks = _DbContext.Todos.ToList();
+
+            var pagedTasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return pagedTasks;
+        }
+
+        /* public async Task<ActionResult<IEnumerable<Taches>>> GetTasks(int pageNumber = 1, int pageSize = 10)
+         {
+             var tasks = await _itachesService.GetAllTasks();
+             var pagedTasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+             return Ok(pagedTasks);
+         }*/
+
+        public async Task<TodoResponse> GetTodosAsync(int page)
+        {
+            if (_DbContext.Todos == null)
+                return null;
+
+            var pageResults = 3f;
+            var pageCount = Math.Ceiling(_DbContext.Todos.Count() / pageResults);
+
+            var todos = await _DbContext.Todos
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+
+            var response = new TodoResponse
+            {
+                Todos = todos,
+                CurrentPage = page,
+                Pages = (int)pageCount
+            };
+
+            return response;
+        }
+
         public async Task<bool> RemoveTodoAsync(Guid id)
         {
             var todo = await _DbContext.Todos.FindAsync(id);

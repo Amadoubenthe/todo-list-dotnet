@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TodoList.BusinessLogic.Interfaces;
 using TodoList.BusinessLogic.Models;
+using TodoList.DataAccess.Models;
 
 namespace TodoList.webApi.Controllers
 {
@@ -23,11 +25,27 @@ namespace TodoList.webApi.Controllers
             _TodoService = todoService;
         }
 
+        /*[HttpGet("{page}")]
+        public async Task<ActionResult<List<Todo>>> GetProducts(int page)
+        {
+            var todos = _TodoService.GetTodosAsync(page);
+
+            return Ok(todos);
+        }*/
+
         [HttpGet]
+        public async Task<IActionResult> Get(int pageNumber = 1, int pageSize = 10)
+        {
+            var result = _TodoService.GetTodos(pageNumber, pageSize);
+
+            return Ok(result);
+        }
+
+        /*[HttpGet]
         public async Task<IActionResult> Get()
         {
             return Ok(_TodoService.GetTodos());
-        }
+        }*/
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get(Guid id)
