@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TodoList.BusinessLogic.Interfaces;
 using TodoList.BusinessLogic.Models;
+using TodoList.DataAccess.Models;
 
 namespace TodoList.webApi.Controllers
 {
@@ -9,13 +11,6 @@ namespace TodoList.webApi.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        /*private readonly ITodo _PersonScore;
-
-        public PersonScoreController(IPersonScore personScore)
-        {
-            _PersonScore = personScore;
-        }*/
-
         private readonly ITodo _TodoService;
 
         public TodoController(ITodo todoService)
@@ -24,9 +19,11 @@ namespace TodoList.webApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(_TodoService.GetTodos());
+            var result = _TodoService.GetTodos(pageNumber, pageSize);
+
+            return Ok(result);
         }
 
         [HttpGet("{id:guid}")]
@@ -50,9 +47,9 @@ namespace TodoList.webApi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] TodoRequest todoRequest)
+        public async Task<IActionResult> Put(Guid id, [FromBody] TodoRequestUpdate todoRequestUpdate)
         {
-            var todo = await _TodoService.UpdateTodoAsync(id, todoRequest);
+            var todo = await _TodoService.UpdateTodoAsync(id, todoRequestUpdate);
 
             return Ok(todo);
         }

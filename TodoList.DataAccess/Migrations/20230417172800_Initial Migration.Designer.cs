@@ -12,8 +12,8 @@ using TodoList.DataAccess.Data;
 namespace TodoList.DataAccess.Migrations
 {
     [DbContext(typeof(TodoApiDbContext))]
-    [Migration("20230413182349_testj")]
-    partial class testj
+    [Migration("20230417172800_Initial Migration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

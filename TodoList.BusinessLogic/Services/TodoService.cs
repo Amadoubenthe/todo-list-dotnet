@@ -15,6 +15,11 @@ namespace TodoList.BusinessLogic.Services
     {
         public readonly TodoApiDbContext _DbContext;
 
+        private readonly string Pending = "Pending";
+        private readonly string InProgress = "InProgress";
+        private readonly string Completed = "Completed";
+        private readonly string Cancelled = "Cancelled";
+
         public TodoService(TodoApiDbContext dbContext)
         {
             _DbContext = dbContext;
@@ -26,7 +31,7 @@ namespace TodoList.BusinessLogic.Services
             {
                 Title = todo.Title,
                 Description = todo.Description,
-                Status = todo.Status,
+                Status = Pending,
                 CreatedAt = DateTime.Now,
             };
 
@@ -53,6 +58,15 @@ namespace TodoList.BusinessLogic.Services
             return _DbContext.Todos.ToList();
         }
 
+        public IEnumerable<Todo> GetTodos(int pageNumber = 1, int pageSize = 10)
+        {
+            var tasks = _DbContext.Todos.ToList();
+
+            var pagedTasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return pagedTasks;
+        }
+
         public async Task<bool> RemoveTodoAsync(Guid id)
         {
             var todo = await _DbContext.Todos.FindAsync(id);
@@ -69,7 +83,7 @@ namespace TodoList.BusinessLogic.Services
             return true;
         }
 
-        public async Task<Todo> UpdateTodoAsync(Guid id, TodoRequest todoRequest)
+        public async Task<Todo> UpdateTodoAsync(Guid id, TodoRequestUpdate todoRequest)
         {
             var todo = await _DbContext.Todos.FindAsync(id);
 
