@@ -11,27 +11,12 @@ namespace TodoList.webApi.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        /*private readonly ITodo _PersonScore;
-
-        public PersonScoreController(IPersonScore personScore)
-        {
-            _PersonScore = personScore;
-        }*/
-
         private readonly ITodo _TodoService;
 
         public TodoController(ITodo todoService)
         {
             _TodoService = todoService;
         }
-
-        /*[HttpGet("{page}")]
-        public async Task<ActionResult<List<Todo>>> GetProducts(int page)
-        {
-            var todos = _TodoService.GetTodosAsync(page);
-
-            return Ok(todos);
-        }*/
 
         [HttpGet]
         public async Task<IActionResult> Get(int pageNumber = 1, int pageSize = 10)
@@ -40,12 +25,6 @@ namespace TodoList.webApi.Controllers
 
             return Ok(result);
         }
-
-        /*[HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            return Ok(_TodoService.GetTodos());
-        }*/
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get(Guid id)
@@ -68,9 +47,9 @@ namespace TodoList.webApi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] TodoRequest todoRequest)
+        public async Task<IActionResult> Put(Guid id, [FromBody] TodoRequestUpdate todoRequestUpdate)
         {
-            var todo = await _TodoService.UpdateTodoAsync(id, todoRequest);
+            var todo = await _TodoService.UpdateTodoAsync(id, todoRequestUpdate);
 
             return Ok(todo);
         }

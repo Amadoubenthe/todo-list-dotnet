@@ -15,6 +15,11 @@ namespace TodoList.BusinessLogic.Services
     {
         public readonly TodoApiDbContext _DbContext;
 
+        private readonly string Pending = "Pending";
+        private readonly string InProgress = "InProgress";
+        private readonly string Completed = "Completed";
+        private readonly string Cancelled = "Cancelled";
+
         public TodoService(TodoApiDbContext dbContext)
         {
             _DbContext = dbContext;
@@ -26,7 +31,7 @@ namespace TodoList.BusinessLogic.Services
             {
                 Title = todo.Title,
                 Description = todo.Description,
-                Status = todo.Status,
+                Status = Pending,
                 CreatedAt = DateTime.Now,
             };
 
@@ -62,36 +67,6 @@ namespace TodoList.BusinessLogic.Services
             return pagedTasks;
         }
 
-        /* public async Task<ActionResult<IEnumerable<Taches>>> GetTasks(int pageNumber = 1, int pageSize = 10)
-         {
-             var tasks = await _itachesService.GetAllTasks();
-             var pagedTasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-             return Ok(pagedTasks);
-         }*/
-
-        public async Task<TodoResponse> GetTodosAsync(int page)
-        {
-            if (_DbContext.Todos == null)
-                return null;
-
-            var pageResults = 3f;
-            var pageCount = Math.Ceiling(_DbContext.Todos.Count() / pageResults);
-
-            var todos = await _DbContext.Todos
-                .Skip((page - 1) * (int)pageResults)
-                .Take((int)pageResults)
-                .ToListAsync();
-
-            var response = new TodoResponse
-            {
-                Todos = todos,
-                CurrentPage = page,
-                Pages = (int)pageCount
-            };
-
-            return response;
-        }
-
         public async Task<bool> RemoveTodoAsync(Guid id)
         {
             var todo = await _DbContext.Todos.FindAsync(id);
@@ -108,7 +83,7 @@ namespace TodoList.BusinessLogic.Services
             return true;
         }
 
-        public async Task<Todo> UpdateTodoAsync(Guid id, TodoRequest todoRequest)
+        public async Task<Todo> UpdateTodoAsync(Guid id, TodoRequestUpdate todoRequest)
         {
             var todo = await _DbContext.Todos.FindAsync(id);
 
